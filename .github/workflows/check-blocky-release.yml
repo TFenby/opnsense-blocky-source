@@ -1,0 +1,44 @@
+name: Check Blocky Release
+
+on:
+  schedule:
+    - cron: "23 */6 * * *" # Every 6 hours at :23
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for new Blocky release
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CURRENT=$(cat BLOCKY_VERSION | tr -d '[:space:]')
+          LATEST=$(gh api repos/0xERR0R/blocky/releases/latest --jq '.tag_name')
+
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "Up to date: $CURRENT"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New release: $CURRENT → $LATEST"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger build
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run build-plugin.yml \
+            -f blocky_version="${{ steps.check.outputs.latest }}"
