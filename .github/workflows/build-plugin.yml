@@ -65,12 +65,12 @@ jobs:
             pkg add dist/FreeBSD:14:amd64/blocky-*.pkg
 
             echo "==> Building plugin package"
-            cd dns/blocky-tfen
+            cd dns/blocky-tfenby
             make package PLUGIN_PHP=84 PLUGIN_PYTHON=311
             cd ../..
 
             echo "==> Copying plugin package to dist"
-            cp dns/blocky-tfen/work/pkg/*.pkg dist/FreeBSD:14:amd64/
+            cp dns/blocky-tfenby/work/pkg/*.pkg dist/FreeBSD:14:amd64/
 
             echo "==> Generating repo index"
             pkg repo dist/FreeBSD:14:amd64/

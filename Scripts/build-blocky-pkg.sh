@@ -41,7 +41,7 @@ comment: "Fast and lightweight DNS proxy and ad-blocker"
 arch: "freebsd:14:amd64"
 prefix: "/usr/local"
 www: "https://0xerr0r.github.io/blocky/"
-maintainer: "opnsense@gfenby.me"
+maintainer: "opnsense@fenby.me"
 licenselogic: "single"
 licenses: [ "Apache-2.0" ]
 desc: "Blocky is a DNS proxy and ad-blocker for the local network."
