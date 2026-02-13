@@ -6,6 +6,9 @@ VERSION="${1:-0.28.2}"
 REVISION="${2:-0}"
 BLOCKY_BIN="${3:-staging/bin/blocky}"
 
+SCRIPTSDIR="$(dirname "$0")"
+PORTSDIR="$(cd "${SCRIPTSDIR}/.." && pwd)"
+
 STAGE="$(mktemp -d)"
 META="$(mktemp -d)"
 OUTDIR="dist/FreeBSD:14:amd64"
@@ -55,6 +58,6 @@ cat > "${META}/+DESC" << EOF
 Blocky is a DNS proxy and ad-blocker for the local network.
 EOF
 
-pkg create -v -m "${META}" -r "${STAGE}" -p "${META}/plist" -o "${OUTDIR}"
+PORTSDIR="${PORTSDIR}" pkg create -v -m "${META}" -r "${STAGE}" -p "${META}/plist" -o "${OUTDIR}"
 
 echo ">>> Package created: ${OUTDIR}/blocky-${PKG_VERSION}.pkg"
