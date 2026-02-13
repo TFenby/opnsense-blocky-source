@@ -1,15 +1,24 @@
-upstream:
-  default:
-    - 1.1.1.1
-    - 1.0.0.1
+# Blocky DNS Configuration
+# Edit this file to configure Blocky. See https://0xerr0r.github.io/blocky/latest/configuration/
+# After editing, restart the service: configctl blocky restart
 
-listening:
-  - ip: 127.0.0.1
-    port: 5335
-    protocol: udp
-  - ip: 127.0.0.1
-    port: 5335
-    protocol: tcp
+upstreams:
+  groups:
+    default:
+      - 1.1.1.1
+      - 8.8.8.8
+
+ports:
+  dns: 5335
+  http: 4000
+
+blocking:
+  denylists:
+    ads:
+      - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+  clientGroupsBlock:
+    default:
+      - ads
 
 log:
   level: info
