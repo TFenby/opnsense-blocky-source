@@ -1,3 +1,6 @@
 Blocky is a DNS proxy and ad-blocker for the local network.
-This plugin provides OPNsense web interface integration for
-managing Blocky configuration, service control, and logging.
+This plugin provides OPNsense integration for enabling,
+disabling, and monitoring the Blocky service.
+
+Blocky configuration is managed via config.yml.
+See https://0xerr0r.github.io/blocky/ for documentation.
