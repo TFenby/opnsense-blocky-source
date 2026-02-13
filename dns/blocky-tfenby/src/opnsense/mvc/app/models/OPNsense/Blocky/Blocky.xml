@@ -1,0 +1,13 @@
+<model>
+    <mount>//OPNsense/Blocky</mount>
+    <version>1.0.0</version>
+    <description>Blocky DNS ad-blocker settings</description>
+    <items>
+        <general>
+            <enabled type="BooleanField">
+                <Default>0</Default>
+                <Required>Y</Required>
+            </enabled>
+        </general>
+    </items>
+</model>

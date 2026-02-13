@@ -1,0 +1,6 @@
+<menu>
+    <Services>
+        <Blocky VisibleName="Blocky DNS" cssClass="fa fa-shield" url="/ui/blocky/" order="99">
+        </Blocky>
+    </Services>
+</menu>

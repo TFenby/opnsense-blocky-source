@@ -1,0 +1,8 @@
+<form>
+    <field>
+        <id>blocky.general.enabled</id>
+        <label>Enable Blocky DNS</label>
+        <type>checkbox</type>
+        <help>Enable or disable the Blocky DNS service.</help>
+    </field>
+</form>
