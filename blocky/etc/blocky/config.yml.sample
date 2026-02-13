@@ -1,0 +1,15 @@
+upstream:
+  default:
+    - 1.1.1.1
+    - 1.0.0.1
+
+listening:
+  - ip: 127.0.0.1
+    port: 5335
+    protocol: udp
+  - ip: 127.0.0.1
+    port: 5335
+    protocol: tcp
+
+log:
+  level: info

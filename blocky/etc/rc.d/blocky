@@ -1,0 +1,41 @@
+#!/bin/sh
+
+. /etc/rc.subr
+
+name="blocky"
+rcvar="blocky_enable"
+command="/usr/local/bin/blocky"
+pidfile="/var/run/blocky.pid"
+blocky_config="/usr/local/etc/blocky/config.yml"
+
+load_rc_config $name
+: ${blocky_enable:=no}
+
+start_cmd="blocky_start"
+stop_cmd="blocky_stop"
+status_cmd="blocky_status"
+
+blocky_start()
+{
+	echo "Starting ${name}."
+	daemon -p ${pidfile} ${command} -c ${blocky_config}
+}
+
+blocky_stop()
+{
+	if [ -f ${pidfile} ]; then
+		kill -TERM $(cat ${pidfile}) 2>/dev/null || true
+		rm -f ${pidfile}
+	fi
+}
+
+blocky_status()
+{
+	if [ -f ${pidfile} ]; then
+		echo "${name} is running as pid $(cat ${pidfile})."
+	else
+		echo "${name} is not running."
+	fi
+}
+
+run_rc_command "$1"
