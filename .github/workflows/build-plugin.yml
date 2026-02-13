@@ -8,105 +8,11 @@ on:
         required: true
 
 env:
-  PLUGIN_NAME: os-blocky-tfen
   PLUGIN_ABI: "FreeBSD:14:amd64"
   REPO_REPO: opnsense-blocky
 
 jobs:
-  download:
-    runs-on: ubuntu-latest
-    outputs:
-      blocky_version: ${{ steps.version.outputs.tag }}
-      blocky_version_short: ${{ steps.version.outputs.short }}
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Resolve version
-        id: version
-        run: |
-          TAG="${{ inputs.blocky_version }}"
-          SHORT="${TAG#v}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "short=$SHORT" >> "$GITHUB_OUTPUT"
-
-      - name: Download Blocky FreeBSD binary
-        run: |
-          TAG="${{ steps.version.outputs.tag }}"
-          ASSET="blocky_${TAG}_Freebsd_x86_64.tar.gz"
-          URL="https://github.com/0xERR0R/blocky/releases/download/${TAG}/${ASSET}"
-          echo "Downloading $URL"
-          curl -fSL "$URL" -o blocky.tar.gz
-          tar xzf blocky.tar.gz
-          chmod +x blocky
-          file blocky
-
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: blocky-binary
-          path: blocky
-          retention-days: 1
-
-  package:
-    needs: download
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Download binary
-        uses: actions/download-artifact@v4
-        with:
-          name: blocky-binary
-          path: staging/bin
-
-      - name: Prepare staging
-        run: |
-          chmod +x staging/bin/blocky
-
-          VERSION_SHORT="${{ needs.download.outputs.blocky_version_short }}"
-          MAJOR_MINOR=$(echo "$VERSION_SHORT" | grep -oE '^[0-9]+\.[0-9]+')
-          PATCH=$(echo "$VERSION_SHORT" | grep -oE '\.[0-9]+$' | tr -d '.' || echo "0")
-
-          PLUGIN_VERSION="${MAJOR_MINOR}"
-          PLUGIN_REVISION="${PATCH}"
-
-          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> "$GITHUB_ENV"
-          echo "PLUGIN_REVISION=$PLUGIN_REVISION" >> "$GITHUB_ENV"
-          echo "PKG_FILENAME=${PLUGIN_NAME}-${PLUGIN_VERSION}_${PLUGIN_REVISION}.pkg" >> "$GITHUB_ENV"
-
-      - name: Build package in FreeBSD
-        uses: vmactions/freebsd-vm@v1
-        with:
-          release: "14.2"
-          usesh: true
-          copyback: true
-          prepare: pkg install -y gettext-runtime
-          run: |
-            set -e
-
-            PLUGIN_VERSION="${{ env.PLUGIN_VERSION }}"
-            PLUGIN_REVISION="${{ env.PLUGIN_REVISION }}"
-            PKG_NAME="${{ env.PLUGIN_NAME }}"
-            PKG_FILENAME="${{ env.PKG_FILENAME }}"
-
-            sh scripts/build-pkg.sh \
-              "$PKG_NAME" \
-              "$PLUGIN_VERSION" \
-              "$PLUGIN_REVISION" \
-              "$PKG_FILENAME" \
-              staging/bin/blocky
-
-      - name: Upload package
-        uses: actions/upload-artifact@v4
-        with:
-          name: plugin-package
-          path: dist/
-          retention-days: 5
-
-  publish:
-    needs: [download, package]
+  build-and-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -114,69 +20,114 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Download package
-        uses: actions/download-artifact@v4
-        with:
-          name: plugin-package
-          path: dist
+      - name: Parse version
+        id: version
+        run: |
+          TAG="${{ github.event.inputs.blocky_version }}"
+          SHORT="${TAG#v}"
+          MAJOR_MINOR=$(echo "$SHORT" | cut -d. -f1,2)
+          PATCH=$(echo "$SHORT" | cut -d. -f3)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "short=$SHORT" >> "$GITHUB_OUTPUT"
+          echo "major_minor=$MAJOR_MINOR" >> "$GITHUB_OUTPUT"
+          echo "patch=${PATCH:-0}" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout pkg repo
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository_owner }}/${{ env.REPO_REPO }}
-          token: ${{ secrets.PKG_REPO_TOKEN }}
-          path: pkg-repo
+      - name: Download blocky FreeBSD binary
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          ASSET="blocky_${TAG}_Freebsd_x86_64.tar.gz"
+          URL="https://github.com/0xERR0R/blocky/releases/download/${TAG}/${ASSET}"
+          echo "Downloading $URL"
+          curl -fSL "$URL" -o blocky.tar.gz
+          tar xzf blocky.tar.gz
+          mkdir -p staging/bin
+          mv blocky staging/bin/blocky
+          chmod +x staging/bin/blocky
+          file staging/bin/blocky
 
-      - name: Deploy to pkg repo
+      - name: Build packages in FreeBSD
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: "14.2"
+          usesh: true
+          copyback: true
+          mem: 6144
+          prepare: pkg install -y git
+          run: |
+            set -eu
+
+            VERSION="${{ steps.version.outputs.major_minor }}"
+            REVISION="${{ steps.version.outputs.patch }}"
+
+            echo "==> Building binary package: blocky ${VERSION}_${REVISION}"
+            sh scripts/build-blocky-pkg.sh "${VERSION}" "${REVISION}" staging/bin/blocky
+
+            echo "==> Installing binary package (needed for plugin PLUGIN_DEPENDS)"
+            pkg add dist/FreeBSD:14:amd64/blocky-*.pkg
+
+            echo "==> Building plugin package"
+            cd dns/blocky-tfen
+            make package PLUGIN_PHP=84 PLUGIN_PYTHON=311
+            cd ../..
+
+            echo "==> Copying plugin package to dist"
+            cp dns/blocky-tfen/work/pkg/*.pkg dist/FreeBSD:14:amd64/
+
+            echo "==> Generating repo index"
+            pkg repo dist/FreeBSD:14:amd64/
+
+            echo "==> Packages built:"
+            ls -la dist/FreeBSD:14:amd64/
+
+      - name: Publish to pkg repo
         run: |
           ABI="${{ env.PLUGIN_ABI }}"
+
+          git clone "https://x-access-token:${{ secrets.PKG_REPO_TOKEN }}@github.com/${{ github.repository_owner }}/${{ env.REPO_REPO }}.git" pkg-repo
+
           mkdir -p "pkg-repo/${ABI}"
 
           cp dist/"${ABI}"/*.pkg "pkg-repo/${ABI}/"
-          cp dist/"${ABI}"/meta "pkg-repo/${ABI}/"
-          cp dist/"${ABI}"/meta.conf "pkg-repo/${ABI}/"
-          cp dist/"${ABI}"/packagesite.pkg "pkg-repo/${ABI}/"
+          cp dist/"${ABI}"/meta.conf "pkg-repo/${ABI}/" 2>/dev/null || true
+          cp dist/"${ABI}"/meta "pkg-repo/${ABI}/" 2>/dev/null || true
+          cp dist/"${ABI}"/packagesite.pkg "pkg-repo/${ABI}/" 2>/dev/null || true
 
           cd pkg-repo
-          if [ -f "${ABI}/packagesite.tzst" ]; then
-            rm -f "${ABI}/packagesite.tzst"
-          fi
-          ln -sf packagesite.pkg "${ABI}/packagesite.tzst"
 
-          if [ -f "${ABI}/data.tzst" ]; then
-            rm -f "${ABI}/data.tzst"
+          # Ensure symlinks for pkg compatibility
+          if [ -f "${ABI}/packagesite.pkg" ]; then
+            rm -f "${ABI}/packagesite.tzst"
+            ln -sf packagesite.pkg "${ABI}/packagesite.tzst"
           fi
           if [ -f "${ABI}/data.pkg" ]; then
+            rm -f "${ABI}/data.tzst"
             ln -sf data.pkg "${ABI}/data.tzst"
           fi
 
-      - name: Push pkg repo
-        working-directory: pkg-repo
-        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet && echo "No changes" && exit 0
-          git commit -m "Update blocky plugin to ${{ needs.download.outputs.blocky_version }}"
+          git diff --cached --quiet && echo "No changes to pkg repo" && exit 0
+          git commit -m "Update blocky packages to ${{ steps.version.outputs.tag }}"
           git push
 
       - name: Update BLOCKY_VERSION
         run: |
-          echo "${{ needs.download.outputs.blocky_version }}" > BLOCKY_VERSION
+          echo "${{ steps.version.outputs.tag }}" > BLOCKY_VERSION
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add BLOCKY_VERSION
-          git diff --cached --quiet && echo "No changes" && exit 0
-          git commit -m "Bump BLOCKY_VERSION to ${{ needs.download.outputs.blocky_version }}"
+          git diff --cached --quiet && echo "No changes to BLOCKY_VERSION" && exit 0
+          git commit -m "Bump BLOCKY_VERSION to ${{ steps.version.outputs.tag }}"
           git push
 
-      - name: Create release
+      - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="blocky-${{ needs.download.outputs.blocky_version }}"
+          TAG="blocky-${{ steps.version.outputs.tag }}"
           gh release create "$TAG" \
-            --title "Blocky ${{ needs.download.outputs.blocky_version }}" \
-            --notes "Built OPNsense plugin for Blocky ${{ needs.download.outputs.blocky_version }}" \
+            --title "Blocky ${{ steps.version.outputs.tag }}" \
+            --notes "Built OPNsense packages for Blocky ${{ steps.version.outputs.tag }}" \
             --latest \
             dist/${{ env.PLUGIN_ABI }}/*.pkg
