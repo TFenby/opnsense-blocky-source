@@ -39,9 +39,8 @@ jobs:
           URL="https://github.com/0xERR0R/blocky/releases/download/${TAG}/${ASSET}"
           echo "Downloading $URL"
           curl -fSL "$URL" -o blocky.tar.gz
-          tar xzf blocky.tar.gz
           mkdir -p staging/bin
-          mv blocky staging/bin/blocky
+          tar xzf blocky.tar.gz -C staging/bin
           chmod +x staging/bin/blocky
           file staging/bin/blocky
 
@@ -60,7 +59,7 @@ jobs:
             REVISION="${{ steps.version.outputs.patch }}"
 
             echo "==> Building binary package: blocky ${VERSION}_${REVISION}"
-            sh scripts/build-blocky-pkg.sh "${VERSION}" "${REVISION}" staging/bin/blocky
+            sh Scripts/build-blocky-pkg.sh "${VERSION}" "${REVISION}" staging/bin/blocky
 
             echo "==> Installing binary package (needed for plugin PLUGIN_DEPENDS)"
             pkg add dist/FreeBSD:14:amd64/blocky-*.pkg
