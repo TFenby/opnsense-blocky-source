@@ -1,41 +1,41 @@
 #!/bin/sh
 
+# PROVIDE: blocky
+# REQUIRE: DAEMON NETWORKING
+# KEYWORD: shutdown
+
 . /etc/rc.subr
 
-name="blocky"
-rcvar="blocky_enable"
-command="/usr/local/bin/blocky"
-pidfile="/var/run/blocky.pid"
-blocky_config="/usr/local/etc/blocky/config.yml"
+name=blocky
+rcvar=blocky_enable
 
-load_rc_config $name
-: ${blocky_enable:=no}
+load_rc_config ${name}
 
-start_cmd="blocky_start"
-stop_cmd="blocky_stop"
-status_cmd="blocky_status"
+: ${blocky_enable:=NO}
+: ${blocky_config:="/usr/local/etc/blocky/config.yml"}
+: ${blocky_user:=}
+: ${blocky_group:=}
+: ${blocky_flags:=}
 
-blocky_start()
+if [ -n "${blocky_user}" ] && [ -z "${blocky_group}" ]; then
+	blocky_group=$(id -gn "${blocky_user}")
+fi
+
+logfile="/var/log/${name}.log"
+pidfile="/var/run/${name}.pid"
+blocky_path="/usr/local/sbin/blocky"
+
+command="/usr/sbin/daemon"
+procname="/usr/local/sbin/blocky"
+command_args="-c -f -o ${logfile} -p ${pidfile} ${blocky_path} \
+	-c ${blocky_config} ${blocky_flags}"
+
+start_precmd="blocky_precmd"
+
+blocky_precmd()
 {
-	echo "Starting ${name}."
-	daemon -p ${pidfile} ${command} -c ${blocky_config}
-}
-
-blocky_stop()
-{
-	if [ -f ${pidfile} ]; then
-		kill -TERM $(cat ${pidfile}) 2>/dev/null || true
-		rm -f ${pidfile}
-	fi
-}
-
-blocky_status()
-{
-	if [ -f ${pidfile} ]; then
-		echo "${name} is running as pid $(cat ${pidfile})."
-	else
-		echo "${name} is not running."
-	fi
+	install -o "${blocky_user:-root}" -g "${blocky_group:-wheel}" \
+		-m 0600 /dev/null "${pidfile}"
 }
 
 run_rc_command "$1"
