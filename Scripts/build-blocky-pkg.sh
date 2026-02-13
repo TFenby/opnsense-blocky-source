@@ -15,16 +15,16 @@ OUTDIR="dist/FreeBSD:14:amd64"
 
 trap "rm -rf ${STAGE} ${META}" EXIT
 
-mkdir -p "${STAGE}/usr/local/bin"
+mkdir -p "${STAGE}/usr/local/sbin"
 mkdir -p "${STAGE}/usr/local/etc/rc.d"
 mkdir -p "${STAGE}/usr/local/etc/blocky"
 mkdir -p "${OUTDIR}"
 
-cp "${BLOCKY_BIN}" "${STAGE}/usr/local/bin/blocky"
+cp "${BLOCKY_BIN}" "${STAGE}/usr/local/sbin/blocky"
 cp blocky/etc/rc.d/blocky "${STAGE}/usr/local/etc/rc.d/blocky"
 cp blocky/etc/blocky/config.yml.sample "${STAGE}/usr/local/etc/blocky/config.yml.sample"
 
-chmod 755 "${STAGE}/usr/local/bin/blocky"
+chmod 755 "${STAGE}/usr/local/sbin/blocky"
 chmod 755 "${STAGE}/usr/local/etc/rc.d/blocky"
 
 if [ "${REVISION}" = "0" ]; then
@@ -34,9 +34,9 @@ else
 fi
 
 cat > "${META}/+MANIFEST" << EOF
-name: "blocky"
+name: "blocky-tfenby"
 version: "${PKG_VERSION}"
-origin: "dns/blocky"
+origin: "dns/blocky-tfenby"
 comment: "Fast and lightweight DNS proxy and ad-blocker"
 arch: "freebsd:14:amd64"
 prefix: "/usr/local"
@@ -48,10 +48,10 @@ desc: "Blocky is a DNS proxy and ad-blocker for the local network."
 EOF
 
 cat > "${META}/plist" << EOF
-/usr/local/bin/blocky
-/usr/local/etc/rc.d/blocky
-@sample /usr/local/etc/blocky/config.yml.sample
-@dir /usr/local/etc/blocky
+sbin/blocky
+etc/rc.d/blocky
+@sample etc/blocky/config.yml.sample
+@dir etc/blocky
 EOF
 
 cat > "${META}/+DESC" << EOF
@@ -60,4 +60,4 @@ EOF
 
 PORTSDIR="${PORTSDIR}" pkg create -v -m "${META}" -r "${STAGE}" -p "${META}/plist" -o "${OUTDIR}"
 
-echo ">>> Package created: ${OUTDIR}/blocky-${PKG_VERSION}.pkg"
+echo ">>> Package created: ${OUTDIR}/blocky-tfenby-${PKG_VERSION}.pkg"
