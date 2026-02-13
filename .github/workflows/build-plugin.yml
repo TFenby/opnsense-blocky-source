@@ -14,6 +14,9 @@ env:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    concurrency:
+      group: build-plugin-${{ github.event.inputs.blocky_version }}
+      cancel-in-progress: true
     permissions:
       contents: write
     steps:
@@ -58,11 +61,11 @@ jobs:
             VERSION="${{ steps.version.outputs.major_minor }}"
             REVISION="${{ steps.version.outputs.patch }}"
 
-            echo "==> Building binary package: blocky ${VERSION}_${REVISION}"
+            echo "==> Building binary package: blocky-tfenby ${VERSION}_${REVISION}"
             sh Scripts/build-blocky-pkg.sh "${VERSION}" "${REVISION}" staging/bin/blocky
 
             echo "==> Installing binary package (needed for plugin PLUGIN_DEPENDS)"
-            pkg add dist/FreeBSD:14:amd64/blocky-*.pkg
+            pkg add dist/FreeBSD:14:amd64/blocky-tfenby-*.pkg
 
             echo "==> Building plugin package"
             cd dns/blocky-tfenby
@@ -78,6 +81,13 @@ jobs:
             echo "==> Packages built:"
             ls -la dist/FreeBSD:14:amd64/
 
+      - name: Smoke test packages
+        run: |
+          echo "==> Verifying package files exist"
+          test -f dist/FreeBSD:14:amd64/blocky-tfenby-*.pkg || { echo "Binary package missing"; exit 1; }
+          test -f dist/FreeBSD:14:amd64/os-blocky-tfenby-*.pkg || { echo "Plugin package missing"; exit 1; }
+          echo "==> Smoke test passed"
+
       - name: Publish to pkg repo
         run: |
           ABI="${{ env.PLUGIN_ABI }}"
@@ -92,16 +102,6 @@ jobs:
           cp dist/"${ABI}"/packagesite.pkg "pkg-repo/${ABI}/" 2>/dev/null || true
 
           cd pkg-repo
-
-          # Ensure symlinks for pkg compatibility
-          if [ -f "${ABI}/packagesite.pkg" ]; then
-            rm -f "${ABI}/packagesite.tzst"
-            ln -sf packagesite.pkg "${ABI}/packagesite.tzst"
-          fi
-          if [ -f "${ABI}/data.pkg" ]; then
-            rm -f "${ABI}/data.tzst"
-            ln -sf data.pkg "${ABI}/data.tzst"
-          fi
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
