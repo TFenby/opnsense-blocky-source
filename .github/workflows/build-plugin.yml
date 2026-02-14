@@ -22,6 +22,8 @@ jobs:
       cancel-in-progress: true
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -53,15 +55,21 @@ jobs:
           echo "major_minor=$MAJOR_MINOR" >> "$GITHUB_OUTPUT"
           echo "patch=${PATCH:-0}" >> "$GITHUB_OUTPUT"
 
-      - name: Download blocky FreeBSD binary
+      - name: Download and verify blocky FreeBSD binary
         run: |
           TAG="${{ steps.version.outputs.tag }}"
           ASSET="blocky_${TAG}_Freebsd_x86_64.tar.gz"
           URL="https://github.com/0xERR0R/blocky/releases/download/${TAG}/${ASSET}"
+
           echo "Downloading $URL"
-          curl -fSL "$URL" -o blocky.tar.gz
+          curl -fSL "$URL" -o "$ASSET"
+          curl -fSL "https://github.com/0xERR0R/blocky/releases/download/${TAG}/blocky_checksums.txt" -o checksums.txt
+
+          echo "Verifying SHA256 checksum"  # Yes I know. TODO: check if hosted elsewhere
+          grep "$ASSET" checksums.txt | sha256sum -c -
+
           mkdir -p staging/bin
-          tar xzf blocky.tar.gz -C staging/bin
+          tar xzf "$ASSET" -C staging/bin
           chmod +x staging/bin/blocky
           file staging/bin/blocky
 
@@ -153,3 +161,8 @@ jobs:
           gh release upload "$TAG" \
             dist/${{ env.PLUGIN_ABI }}/*.pkg \
             --clobber
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: 'dist/${{ env.PLUGIN_ABI }}/*.pkg'
