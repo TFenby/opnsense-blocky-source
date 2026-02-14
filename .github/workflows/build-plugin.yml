@@ -130,6 +130,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="blocky-${{ steps.version.outputs.tag }}"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$TAG" \
             --title "Blocky ${{ steps.version.outputs.tag }}" \
             --notes "Built OPNsense packages for Blocky ${{ steps.version.outputs.tag }}" \
