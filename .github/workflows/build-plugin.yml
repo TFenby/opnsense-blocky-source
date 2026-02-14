@@ -23,6 +23,11 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Validate tag format
+        run: |
+          TAG="${{ github.event.inputs.blocky_version }}"
+          echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$' || { echo "::error::Invalid tag format '$TAG'. Expected vX.Y.Z"; exit 1; }
+
       - name: Parse version
         id: version
         run: |
