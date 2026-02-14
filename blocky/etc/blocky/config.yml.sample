@@ -10,7 +10,7 @@ upstreams:
 
 # Blocky acts as a primary DNS server (like AdGuard Home). Disable Unbound if using Blocky as your DNS resolver.
 ports:
-  dns: 53
+  dns: 5353
   http: 4000
 
 blocking:

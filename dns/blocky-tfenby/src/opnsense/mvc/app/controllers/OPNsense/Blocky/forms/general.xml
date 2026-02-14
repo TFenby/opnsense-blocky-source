@@ -3,6 +3,6 @@
         <id>blocky.general.enabled</id>
         <label>Enable Blocky DNS</label>
         <type>checkbox</type>
-        <help>Enable or disable the Blocky DNS service.</help>
+        <help>Blocky binds to port 5353 by default. All configuration is done by editing the config file directly at /usr/local/etc/blocky/config.yml.</help>
     </field>
 </form>
