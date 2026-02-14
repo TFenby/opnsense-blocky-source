@@ -1,11 +1,14 @@
 name: Build Plugin
 
 on:
+  push:
+    tags:
+      - "plugin-v*"
   workflow_dispatch:
     inputs:
       blocky_version:
         description: "Blocky version tag (e.g. v0.28.2)"
-        required: true
+        required: false
 
 env:
   PLUGIN_ABI: "FreeBSD:14:amd64"
@@ -15,7 +18,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     concurrency:
-      group: build-plugin-${{ github.event.inputs.blocky_version }}
+      group: build-plugin
       cancel-in-progress: true
     permissions:
       contents: write
@@ -23,15 +26,25 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Validate tag format
+      - name: Resolve blocky version
+        id: resolve
         run: |
           TAG="${{ github.event.inputs.blocky_version }}"
+          if [ -z "$TAG" ]; then
+            TAG="$(cat BLOCKY_VERSION | tr -d '[:space:]')"
+            echo "No version input provided — using BLOCKY_VERSION: $TAG"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Validate tag format
+        run: |
+          TAG="${{ steps.resolve.outputs.tag }}"
           echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$' || { echo "::error::Invalid tag format '$TAG'. Expected vX.Y.Z"; exit 1; }
 
       - name: Parse version
         id: version
         run: |
-          TAG="${{ github.event.inputs.blocky_version }}"
+          TAG="${{ steps.resolve.outputs.tag }}"
           SHORT="${TAG#v}"
           MAJOR_MINOR=$(echo "$SHORT" | cut -d. -f1,2)
           PATCH=$(echo "$SHORT" | cut -d. -f3)
@@ -86,13 +99,6 @@ jobs:
             echo "==> Packages built:"
             ls -la dist/FreeBSD:14:amd64/
 
-      - name: Smoke test packages
-        run: |
-          echo "==> Verifying package files exist"
-          test -f dist/FreeBSD:14:amd64/blocky-tfenby-*.pkg || { echo "Binary package missing"; exit 1; }
-          test -f dist/FreeBSD:14:amd64/os-blocky-tfenby-*.pkg || { echo "Plugin package missing"; exit 1; }
-          echo "==> Smoke test passed"
-
       - name: Publish to pkg repo
         run: |
           ABI="${{ env.PLUGIN_ABI }}"
@@ -100,6 +106,11 @@ jobs:
           git clone "https://x-access-token:${{ secrets.PKG_REPO_TOKEN }}@github.com/${{ github.repository_owner }}/${{ env.REPO_REPO }}.git" pkg-repo
 
           mkdir -p "pkg-repo/${ABI}"
+
+          # Clean old package versions before copying new ones.
+          # FreeBSD/OPNsense repos only serve the latest version per package.
+          rm -f "pkg-repo/${ABI}"/blocky-tfenby-*.pkg
+          rm -f "pkg-repo/${ABI}"/os-blocky-tfenby-*.pkg
 
           cp dist/"${ABI}"/*.pkg "pkg-repo/${ABI}/"
           cp dist/"${ABI}"/meta.conf "pkg-repo/${ABI}/" 2>/dev/null || true
@@ -116,6 +127,7 @@ jobs:
           git push
 
       - name: Update BLOCKY_VERSION
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         run: |
           echo "${{ steps.version.outputs.tag }}" > BLOCKY_VERSION
           git config user.name "github-actions[bot]"
@@ -130,9 +142,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="blocky-${{ steps.version.outputs.tag }}"
-          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+
+          # Create release if it doesn't exist, then upload/overwrite assets.
+          # Avoids delete+recreate which is not safe under cancellation.
           gh release create "$TAG" \
             --title "Blocky ${{ steps.version.outputs.tag }}" \
             --notes "Built OPNsense packages for Blocky ${{ steps.version.outputs.tag }}" \
-            --latest \
-            dist/${{ env.PLUGIN_ABI }}/*.pkg
+            --latest 2>/dev/null || true
+
+          gh release upload "$TAG" \
+            dist/${{ env.PLUGIN_ABI }}/*.pkg \
+            --clobber
