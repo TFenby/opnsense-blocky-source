@@ -26,25 +26,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+function blocky_enabled()
+{
+    $model = new \OPNsense\Blocky\Blocky();
+    return (string)$model->general->enabled == '1';
+}
+
+function blocky_configure()
+{
+    return [
+        'dns' => ['blocky_configure_do'],
+    ];
+}
+
 function blocky_services()
 {
     $services = [];
 
-    $cnf = \OPNsense\Core\Config::getInstance()->object();
-    if ((string)$cnf->OPNsense->Blocky->general->enabled == '1') {
-        $services[] = [
-            'description' => gettext('Blocky DNS'),
-            'configd' => [
-                'restart' => ['blocky restart'],
-                'start' => ['blocky start'],
-                'stop' => ['blocky stop'],
-            ],
-            'pid' => '/var/run/blocky.pid',
-            'name' => 'blocky',
-        ];
+    if (!blocky_enabled()) {
+        return $services;
     }
 
+    $services[] = [
+        'dns_ports' => ['53'],
+        'description' => gettext('Blocky DNS'),
+        'configd' => [
+            'restart' => ['blocky restart'],
+            'start' => ['blocky start'],
+            'stop' => ['blocky stop'],
+        ],
+        'pidfile' => '/var/run/blocky.pid',
+        'name' => 'blocky',
+    ];
+
     return $services;
+}
+
+function blocky_configure_do($verbose)
+{
+    service_log('Starting Blocky DNS...', $verbose);
+    configd_run('template reload OPNsense/Blocky');
+    configd_run('blocky restart');
+    service_log("done.\n", $verbose);
 }
 
 function blocky_syslog()
