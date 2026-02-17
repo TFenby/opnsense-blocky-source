@@ -4,3 +4,36 @@ disabling, and monitoring the Blocky service.
 
 Blocky configuration is managed via config.yml.
 See https://0xerr0r.github.io/blocky/ for documentation.
+
+Plugin Changelog
+================
+
+1.5_1
+
+Fixed:
+* fix plugin version metadata not matching tagged release
+
+1.5
+
+Added:
+* bundle repo signing public key for simplified install
+* sign package repository catalog with RSA key
+
+1.4
+
+Added:
+* sign releases and verify Blocky binary hash
+
+1.3
+
+Fixed:
+* fix default port 53 bind configuration
+* fix menu ordering
+
+1.2
+
+Added:
+* initial release with OPNsense MVC plugin structure
+* service management (start, stop, reload)
+* default DNS port set to 53
+* sample config for Blocky v0.28+
