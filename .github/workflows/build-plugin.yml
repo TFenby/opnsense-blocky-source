@@ -43,6 +43,13 @@ jobs:
           TAG="${{ steps.resolve.outputs.tag }}"
           echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$' || { echo "::error::Invalid tag format '$TAG'. Expected vX.Y.Z"; exit 1; }
 
+      - name: Check PKG_REPO_KEY secret
+        run: |
+          if [ -z "${{ secrets.PKG_REPO_KEY }}" ]; then
+            echo "::error::PKG_REPO_KEY secret not configured — see supply chain security prerequisites"
+            exit 1
+          fi
+
       - name: Parse version
         id: version
         run: |
@@ -73,6 +80,11 @@ jobs:
           chmod +x staging/bin/blocky
           file staging/bin/blocky
 
+      - name: Write signing key
+        run: |
+          echo "${{ secrets.PKG_REPO_KEY }}" | base64 -d > repo.key
+          chmod 0400 repo.key
+
       - name: Build packages in FreeBSD
         uses: vmactions/freebsd-vm@v1
         with:
@@ -102,10 +114,17 @@ jobs:
             cp dns/blocky-tfenby/work/pkg/*.pkg dist/FreeBSD:14:amd64/
 
             echo "==> Generating repo index"
-            pkg repo dist/FreeBSD:14:amd64/
+            pkg repo dist/FreeBSD:14:amd64/ repo.key
+
+            echo "==> Verifying repo catalog is signed"
+            ls -la dist/FreeBSD:14:amd64/packagesite.pkg
 
             echo "==> Packages built:"
             ls -la dist/FreeBSD:14:amd64/
+
+      - name: Clean signing key
+        if: always()
+        run: rm -f repo.key
 
       - name: Publish to pkg repo
         run: |
@@ -119,6 +138,8 @@ jobs:
           # FreeBSD/OPNsense repos only serve the latest version per package.
           rm -f "pkg-repo/${ABI}"/blocky-tfenby-*.pkg
           rm -f "pkg-repo/${ABI}"/os-blocky-tfenby-*.pkg
+
+          rm -f "pkg-repo/${ABI}"/{meta*,packagesite*,data*}
 
           cp dist/"${ABI}"/*.pkg "pkg-repo/${ABI}/"
           cp dist/"${ABI}"/meta.conf "pkg-repo/${ABI}/" 2>/dev/null || true
