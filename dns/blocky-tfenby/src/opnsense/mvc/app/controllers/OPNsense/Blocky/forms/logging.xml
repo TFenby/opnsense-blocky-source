@@ -1,0 +1,69 @@
+<form>
+    <tab id="logging-settings" description="Log Settings">
+        <field>
+            <id>blocky.log.timestamp</id>
+            <label>Include Timestamps</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.log.privacy</id>
+            <label>Privacy Mode</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="logging-querylog" description="Query Log">
+        <field>
+            <id>blocky.queryLog.type</id>
+            <label>Log Destination Type</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.target</id>
+            <label>Connection String / Path</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.logRetentionDays</id>
+            <label>Log Retention Days</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.creationAttempts</id>
+            <label>Creation Attempts</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.creationCooldown</id>
+            <label>Creation Cooldown</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.fields</id>
+            <label>Included Fields</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.flushInterval</id>
+            <label>Flush Interval</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.queryLog.ignore.sudn</id>
+            <label>Ignore SUDN Queries</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="logging-prometheus" description="Prometheus">
+        <field>
+            <id>blocky.prometheus.enable</id>
+            <label>Enable Metrics</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.prometheus.path</id>
+            <label>Metrics Path</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <activetab>logging-settings</activetab>
+</form>
