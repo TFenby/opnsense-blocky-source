@@ -1,6 +1,12 @@
 <menu>
     <Services>
-        <Blocky VisibleName="Blocky DNS" cssClass="fa fa-shield" url="/ui/blocky/">
+        <Blocky VisibleName="Blocky DNS" cssClass="fa fa-shield">
+            <General VisibleName="General" order="10" url="/ui/blocky/general"/>
+            <Blocking VisibleName="Blocking" order="20" url="/ui/blocky/blocking"/>
+            <DnsResolution VisibleName="DNS Resolution" order="30" url="/ui/blocky/dns_resolution"/>
+            <Security VisibleName="Security" order="40" url="/ui/blocky/security"/>
+            <Logging VisibleName="Logging &amp; Monitoring" order="50" url="/ui/blocky/logging"/>
+            <Advanced VisibleName="Advanced" order="60" url="/ui/blocky/advanced"/>
         </Blocky>
     </Services>
 </menu>
