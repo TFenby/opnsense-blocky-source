@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Resolve blocky version
         id: resolve
@@ -61,6 +63,17 @@ jobs:
           echo "short=$SHORT" >> "$GITHUB_OUTPUT"
           echo "major_minor=$MAJOR_MINOR" >> "$GITHUB_OUTPUT"
           echo "patch=${PATCH:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Parse plugin version
+        id: plugin
+        run: |
+          VER=$(grep '^PLUGIN_VERSION=' dns/blocky-tfenby/Makefile | sed 's/.*=[[:space:]]*//')
+          REV=$(grep '^PLUGIN_REVISION=' dns/blocky-tfenby/Makefile | sed 's/.*=[[:space:]]*//' || true)
+          if [ -n "$REV" ] && [ "$REV" != "0" ]; then
+            echo "version=${VER}_${REV}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${VER}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download and verify blocky FreeBSD binary
         run: |
@@ -106,8 +119,9 @@ jobs:
             pkg add dist/FreeBSD:14:amd64/blocky-tfenby-*.pkg
 
             echo "==> Building plugin package"
+            PLUGIN_HASH=$(echo "${{ github.sha }}" | cut -c1-9)
             cd dns/blocky-tfenby
-            make package PLUGIN_PHP=84 PLUGIN_PYTHON=311
+            make package PLUGIN_PHP=84 PLUGIN_PYTHON=311 PLUGIN_HASH="${PLUGIN_HASH}"
             cd ../..
 
             echo "==> Copying plugin package to dist"
@@ -152,7 +166,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && echo "No changes to pkg repo" && exit 0
-          git commit -m "Update blocky packages to ${{ steps.version.outputs.tag }}"
+          git commit -m "Update packages: plugin ${{ steps.plugin.outputs.version }}, blocky ${{ steps.version.outputs.tag }}"
           git push
 
       - name: Update BLOCKY_VERSION

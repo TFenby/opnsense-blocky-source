@@ -8,6 +8,11 @@ See https://0xerr0r.github.io/blocky/ for documentation.
 Plugin Changelog
 ================
 
+1.5_2
+
+Fixed:
+* fix empty product_hash in CI build (pass git SHA explicitly)
+
 1.5_1
 
 Fixed:
