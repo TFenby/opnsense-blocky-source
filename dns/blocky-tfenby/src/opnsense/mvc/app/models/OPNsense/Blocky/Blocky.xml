@@ -1,6 +1,6 @@
 <model>
     <mount>//OPNsense/Blocky</mount>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <description>Blocky DNS ad-blocker settings</description>
     <items>
         <general>
@@ -9,5 +9,170 @@
                 <Required>Y</Required>
             </enabled>
         </general>
+        <ports>
+            <dns type="TextField"><Default></Default></dns>
+            <http type="TextField"><Default></Default></http>
+            <tls type="TextField"><Default></Default></tls>
+            <https type="TextField"><Default></Default></https>
+            <dohPath type="TextField"><Default></Default></dohPath>
+        </ports>
+        <global>
+            <connectIPVersion type="TextField"><Default></Default></connectIPVersion>
+            <certFile type="TextField"><Default></Default></certFile>
+            <keyFile type="TextField"><Default></Default></keyFile>
+            <minTlsServeVersion type="TextField"><Default></Default></minTlsServeVersion>
+        </global>
+        <upstreams>
+            <groups>
+                <default type="TextField"><Default></Default></default>
+                <custom type="TextField"><Default></Default></custom>
+            </groups>
+            <strategy type="TextField"><Default></Default></strategy>
+            <timeout type="TextField"><Default></Default></timeout>
+            <init>
+                <strategy type="TextField"><Default></Default></strategy>
+            </init>
+            <userAgent type="TextField"><Default></Default></userAgent>
+        </upstreams>
+        <bootstrapDns>
+            <simple type="TextField"><Default></Default></simple>
+            <complex type="TextField"><Default></Default></complex>
+        </bootstrapDns>
+        <blocking>
+            <denylists type="TextField"><Default></Default></denylists>
+            <allowlists type="TextField"><Default></Default></allowlists>
+            <clientGroupsBlock type="TextField"><Default></Default></clientGroupsBlock>
+            <blockType type="TextField"><Default></Default></blockType>
+            <blockTTL type="TextField"><Default></Default></blockTTL>
+            <loading>
+                <refreshPeriod type="TextField"><Default></Default></refreshPeriod>
+                <strategy type="TextField"><Default></Default></strategy>
+                <maxErrorsPerSource type="TextField"><Default></Default></maxErrorsPerSource>
+                <concurrency type="TextField"><Default></Default></concurrency>
+                <downloads>
+                    <timeout type="TextField"><Default></Default></timeout>
+                    <writeTimeout type="TextField"><Default></Default></writeTimeout>
+                    <readTimeout type="TextField"><Default></Default></readTimeout>
+                    <readHeaderTimeout type="TextField"><Default></Default></readHeaderTimeout>
+                    <attempts type="TextField"><Default></Default></attempts>
+                    <cooldown type="TextField"><Default></Default></cooldown>
+                </downloads>
+            </loading>
+        </blocking>
+        <caching>
+            <minTime type="TextField"><Default></Default></minTime>
+            <maxTime type="TextField"><Default></Default></maxTime>
+            <prefetching type="TextField"><Default></Default></prefetching>
+            <prefetchExpires type="TextField"><Default></Default></prefetchExpires>
+            <prefetchThreshold type="TextField"><Default></Default></prefetchThreshold>
+            <cacheTimeNegative type="TextField"><Default></Default></cacheTimeNegative>
+            <maxItemsCount type="TextField"><Default></Default></maxItemsCount>
+            <prefetchMaxItemsCount type="TextField"><Default></Default></prefetchMaxItemsCount>
+            <exclude type="TextField"><Default></Default></exclude>
+        </caching>
+        <conditional>
+            <mapping type="TextField"><Default></Default></mapping>
+            <fallbackUpstream type="TextField"><Default></Default></fallbackUpstream>
+            <rewrite type="TextField"><Default></Default></rewrite>
+        </conditional>
+        <customDNS>
+            <mapping type="TextField"><Default></Default></mapping>
+            <customTTL type="TextField"><Default></Default></customTTL>
+            <filterUnmappedTypes type="TextField"><Default></Default></filterUnmappedTypes>
+            <rewrite type="TextField"><Default></Default></rewrite>
+            <fallbackUpstream type="TextField"><Default></Default></fallbackUpstream>
+            <zone type="TextField"><Default></Default></zone>
+        </customDNS>
+        <clientLookup>
+            <upstream type="TextField"><Default></Default></upstream>
+            <singleNameOrder type="TextField"><Default></Default></singleNameOrder>
+            <clients type="TextField"><Default></Default></clients>
+        </clientLookup>
+        <hostsFile>
+            <sources type="TextField"><Default></Default></sources>
+            <hostsTTL type="TextField"><Default></Default></hostsTTL>
+            <filterLoopback type="TextField"><Default></Default></filterLoopback>
+            <loading>
+                <refreshPeriod type="TextField"><Default></Default></refreshPeriod>
+                <concurrency type="TextField"><Default></Default></concurrency>
+                <strategy type="TextField"><Default></Default></strategy>
+                <maxErrorsPerSource type="TextField"><Default></Default></maxErrorsPerSource>
+                <downloads>
+                    <timeout type="TextField"><Default></Default></timeout>
+                    <attempts type="TextField"><Default></Default></attempts>
+                    <cooldown type="TextField"><Default></Default></cooldown>
+                </downloads>
+            </loading>
+        </hostsFile>
+        <filtering>
+            <queryTypes type="TextField"><Default></Default></queryTypes>
+        </filtering>
+        <fqdnOnly>
+            <enable type="TextField"><Default></Default></enable>
+        </fqdnOnly>
+        <log>
+            <level type="TextField"><Default></Default></level>
+            <format type="TextField"><Default></Default></format>
+            <timestamp type="TextField"><Default></Default></timestamp>
+            <privacy type="TextField"><Default></Default></privacy>
+        </log>
+        <queryLog>
+            <type type="TextField"><Default></Default></type>
+            <target type="TextField"><Default></Default></target>
+            <logRetentionDays type="TextField"><Default></Default></logRetentionDays>
+            <creationAttempts type="TextField"><Default></Default></creationAttempts>
+            <creationCooldown type="TextField"><Default></Default></creationCooldown>
+            <fields type="TextField"><Default></Default></fields>
+            <flushInterval type="TextField"><Default></Default></flushInterval>
+            <ignore>
+                <sudn type="TextField"><Default></Default></sudn>
+            </ignore>
+        </queryLog>
+        <ede>
+            <enable type="TextField"><Default></Default></enable>
+        </ede>
+        <ecs>
+            <useAsClient type="TextField"><Default></Default></useAsClient>
+            <forward type="TextField"><Default></Default></forward>
+            <ipv4Mask type="TextField"><Default></Default></ipv4Mask>
+            <ipv6Mask type="TextField"><Default></Default></ipv6Mask>
+        </ecs>
+        <specialUseDomains>
+            <enable type="TextField"><Default></Default></enable>
+            <rfc6762AppendixG type="TextField"><Default></Default></rfc6762AppendixG>
+        </specialUseDomains>
+        <dnssec>
+            <validate type="TextField"><Default></Default></validate>
+            <maxChainDepth type="TextField"><Default></Default></maxChainDepth>
+            <cacheExpirationHours type="TextField"><Default></Default></cacheExpirationHours>
+            <maxUpstreamQueries type="TextField"><Default></Default></maxUpstreamQueries>
+            <maxNSEC3Iterations type="TextField"><Default></Default></maxNSEC3Iterations>
+            <clockSkewToleranceSec type="TextField"><Default></Default></clockSkewToleranceSec>
+            <trustAnchors type="TextField"><Default></Default></trustAnchors>
+        </dnssec>
+        <prometheus>
+            <enable type="TextField"><Default></Default></enable>
+            <path type="TextField"><Default></Default></path>
+        </prometheus>
+        <redis>
+            <address type="TextField"><Default></Default></address>
+            <username type="TextField"><Default></Default></username>
+            <password type="TextField"><Default></Default></password>
+            <database type="TextField"><Default></Default></database>
+            <required type="TextField"><Default></Default></required>
+            <connectionAttempts type="TextField"><Default></Default></connectionAttempts>
+            <connectionCooldown type="TextField"><Default></Default></connectionCooldown>
+            <sentinelUsername type="TextField"><Default></Default></sentinelUsername>
+            <sentinelPassword type="TextField"><Default></Default></sentinelPassword>
+            <sentinelAddresses type="TextField"><Default></Default></sentinelAddresses>
+        </redis>
+        <dns64>
+            <enable type="TextField"><Default></Default></enable>
+            <prefixes type="TextField"><Default></Default></prefixes>
+            <exclusionSet type="TextField"><Default></Default></exclusionSet>
+        </dns64>
+        <advanced>
+            <customYaml type="TextField"><Default></Default></customYaml>
+        </advanced>
     </items>
 </model>
