@@ -1,8 +1,138 @@
 <form>
-    <field>
-        <id>blocky.general.enabled</id>
-        <label>Enable Blocky DNS</label>
-        <type>checkbox</type>
-        <help>Blocky binds to port 5353 by default. All configuration is done by editing the config file directly at /usr/local/etc/blocky/config.yml.</help>
-    </field>
+    <tab id="general-service" description="Service">
+        <field>
+            <id>blocky.general.enabled</id>
+            <label>Enable Blocky DNS</label>
+            <type>checkbox</type>
+            <help>Blocky binds to port 5353 by default. All configuration is done by editing the config file directly at /usr/local/etc/blocky/config.yml.</help>
+        </field>
+        <field>
+            <id>blocky.log.level</id>
+            <label>Log Level</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.log.format</id>
+            <label>Log Format</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.global.connectIPVersion</id>
+            <label>Connect IP Version</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Listener Ports</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.ports.dns</id>
+            <label>DNS Port</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ports.http</id>
+            <label>HTTP Port</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ports.tls</id>
+            <label>TLS Port</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ports.https</id>
+            <label>HTTPS Port</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="general-upstreams" description="Upstreams">
+        <field>
+            <id>blocky.upstreams.groups.default</id>
+            <label>Default Upstream Resolvers</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.upstreams.groups.custom</id>
+            <label>Custom Upstream Groups</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.upstreams.strategy</id>
+            <label>Upstream Strategy</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.upstreams.timeout</id>
+            <label>Upstream Timeout</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.upstreams.init.strategy</id>
+            <label>Init Strategy</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.upstreams.userAgent</id>
+            <label>HTTP User-Agent</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Bootstrap DNS</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.bootstrapDns.simple</id>
+            <label>Bootstrap DNS Servers</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.bootstrapDns.complex</id>
+            <label>Bootstrap DNS (Advanced)</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="general-caching" description="Caching">
+        <field>
+            <id>blocky.caching.minTime</id>
+            <label>Minimum Cache Time</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.maxTime</id>
+            <label>Maximum Cache Time</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.prefetching</id>
+            <label>Enable Prefetching</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.prefetchExpires</id>
+            <label>Prefetch Expiry Window</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.prefetchThreshold</id>
+            <label>Prefetch Threshold</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.cacheTimeNegative</id>
+            <label>Negative Cache Time</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.maxItemsCount</id>
+            <label>Max Cache Items</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.caching.prefetchMaxItemsCount</id>
+            <label>Max Prefetch Cache Items</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <activetab>general-service</activetab>
 </form>
