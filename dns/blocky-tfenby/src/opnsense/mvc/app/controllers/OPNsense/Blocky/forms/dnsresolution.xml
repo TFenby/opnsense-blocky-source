@@ -1,0 +1,150 @@
+<form>
+    <tab id="dns-conditional" description="Conditional DNS">
+        <field>
+            <id>blocky.conditional.mapping</id>
+            <label>Domain to Resolver Mapping</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.conditional.fallbackUpstream</id>
+            <label>Fallback to Upstream</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.conditional.rewrite</id>
+            <label>Domain Rewrite</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="dns-custom" description="Custom DNS">
+        <field>
+            <id>blocky.customDNS.mapping</id>
+            <label>Domain to IP Mapping</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.customDNS.customTTL</id>
+            <label>Custom TTL</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.customDNS.filterUnmappedTypes</id>
+            <label>Filter Unmapped Types</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.customDNS.rewrite</id>
+            <label>Domain Substitution</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.customDNS.fallbackUpstream</id>
+            <label>Fallback Upstream</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.customDNS.zone</id>
+            <label>Raw Zone File</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="dns-clients" description="Clients &amp; Hosts">
+        <field>
+            <label>Client Lookup</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.clientLookup.upstream</id>
+            <label>Reverse Lookup Server</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.clientLookup.singleNameOrder</id>
+            <label>Name Selection Order</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.clientLookup.clients</id>
+            <label>Manual Client Mapping</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Hosts File</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.sources</id>
+            <label>Hosts File Sources</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.hostsTTL</id>
+            <label>Hosts File TTL</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.filterLoopback</id>
+            <label>Filter Loopback Entries</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Hosts File Loading</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.refreshPeriod</id>
+            <label>Refresh Period</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.concurrency</id>
+            <label>Loading Concurrency</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.strategy</id>
+            <label>Loading Strategy</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.maxErrorsPerSource</id>
+            <label>Max Errors Per Source</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.downloads.timeout</id>
+            <label>Download Timeout</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.downloads.attempts</id>
+            <label>Download Attempts</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.hostsFile.loading.downloads.cooldown</id>
+            <label>Retry Cooldown</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Query Filtering</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.filtering.queryTypes</id>
+            <label>Drop Query Types</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.fqdnOnly.enable</id>
+            <label>FQDN Only Mode</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ports.dohPath</id>
+            <label>DoH URL Path</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <activetab>dns-conditional</activetab>
+</form>

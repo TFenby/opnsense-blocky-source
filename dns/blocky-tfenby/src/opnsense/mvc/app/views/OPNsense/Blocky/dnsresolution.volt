@@ -24,39 +24,37 @@
  # POSSIBILITY OF SUCH DAMAGE.
  #}
 
-<ul class="nav nav-tabs" data-tabs="tabs" id="maintabs">
-    <li class="active"><a data-toggle="tab" href="#general">{{ lang._('General') }}</a></li>
+<ul id="dnsresolutionTabsHeader" class="nav nav-tabs" role="tablist">
+    {{ partial("layout_partials/base_tabs_header", ['formData': dnsresolutionForm]) }}
 </ul>
 
-<div class="tab-content content-box tab-content">
-    <div id="general" class="tab-pane fade in active">
-        <div class="content-box" style="padding-bottom: 1.5em;">
-            {{ partial("layout_partials/base_form",['fields':generalForm,'id':'frm_general_settings'])}}
-            <div class="col-md-12 __mt">
-                <button class="btn btn-primary" id="saveAct" type="button"><b>{{ lang._('Save') }}</b> <i id="saveAct_progress"></i></button>
-            </div>
-        </div>
-    </div>
+<div id="dnsresolutionTabsContent" class="content-box tab-content">
+    {{ partial("layout_partials/base_tabs_content", ['formData': dnsresolutionForm]) }}
 </div>
 
 <script>
 $( document ).ready(function() {
-    var data_get_map = {'frm_general_settings':"/api/blocky/settings/get"};
-    mapDataToFormUI(data_get_map).done(function(data){
+    mapDataToFormUI({'frm_dnsresolution': "/api/blocky/settings/get"}).done(function(data){
         formatTokenizersUI();
         $('.selectpicker').selectpicker('refresh');
     });
 
-    $("#saveAct").click(function(){
-        saveFormToEndpoint(url="/api/blocky/settings/set", formid='frm_general_settings',callback_ok=function(){
-            $("#saveAct_progress").addClass("fa fa-spinner fa-pulse");
-            ajaxCall(url="/api/blocky/service/reconfigure", sendData={}, callback=function(data,status) {
-                updateServiceControlUI('blocky');
-                $("#saveAct_progress").removeClass("fa fa-spinner fa-pulse");
-            });
+    $('[id^="save_dns-"]').each(function () {
+        var $btn = $(this);
+        var formId = this.id.replace(/^save_/, 'frm_');
+        $btn.SimpleActionButton({
+            onPreAction: function() {
+                var dfrd = $.Deferred();
+                saveFormToEndpoint(
+                    "/api/blocky/settings/set",
+                    formId,
+                    function() { dfrd.resolve(); },
+                    true,
+                    function() { dfrd.reject(); }
+                );
+                return dfrd;
+            }
         });
     });
-
-    updateServiceControlUI('blocky');
 });
 </script>

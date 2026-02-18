@@ -28,11 +28,11 @@
 
 namespace OPNsense\Blocky;
 
-class IndexController extends \OPNsense\Base\IndexController
+class DnsResolutionController extends \OPNsense\Base\IndexController
 {
     public function indexAction()
     {
-        $this->view->pick('OPNsense/Blocky/index');
-        $this->view->generalForm = $this->getForm('general');
+        $this->view->pick('OPNsense/Blocky/dnsresolution');
+        $this->view->dnsresolutionForm = $this->getForm('dnsresolution');
     }
 }
