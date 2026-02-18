@@ -39,7 +39,7 @@ $( document ).ready(function() {
         $('.selectpicker').selectpicker('refresh');
     });
 
-    $('[id^="save_dns-"]').each(function () {
+    $('[id^="save_dnsresolution-"]').each(function () {
         var $btn = $(this);
         var formId = this.id.replace(/^save_/, 'frm_');
         $btn.SimpleActionButton({

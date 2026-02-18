@@ -1,5 +1,5 @@
 <form>
-    <tab id="dns-conditional" description="Conditional DNS">
+    <tab id="dnsresolution-conditional" description="Conditional DNS">
         <field>
             <id>blocky.conditional.mapping</id>
             <label>Domain to Resolver Mapping</label>
@@ -16,7 +16,7 @@
             <type>text</type>
         </field>
     </tab>
-    <tab id="dns-custom" description="Custom DNS">
+    <tab id="dnsresolution-custom" description="Custom DNS">
         <field>
             <id>blocky.customDNS.mapping</id>
             <label>Domain to IP Mapping</label>
@@ -48,7 +48,7 @@
             <type>text</type>
         </field>
     </tab>
-    <tab id="dns-clients" description="Clients &amp; Hosts">
+    <tab id="dnsresolution-clients" description="Clients &amp; Hosts">
         <field>
             <label>Client Lookup</label>
             <type>header</type>
@@ -146,5 +146,5 @@
             <type>text</type>
         </field>
     </tab>
-    <activetab>dns-conditional</activetab>
+    <activetab>dnsresolution-conditional</activetab>
 </form>
