@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<form>
+    <tab id="security-dnssec" description="DNSSEC">
+        <field>
+            <id>blocky.dnssec.validate</id>
+            <label>Enable DNSSEC Validation</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dnssec.maxChainDepth</id>
+            <label>Max Chain Depth</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dnssec.cacheExpirationHours</id>
+            <label>Validation Cache Hours</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dnssec.maxUpstreamQueries</id>
+            <label>Max Upstream Queries</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dnssec.maxNSEC3Iterations</id>
+            <label>Max NSEC3 Iterations</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dnssec.clockSkewToleranceSec</id>
+            <label>Clock Skew Tolerance (s)</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dnssec.trustAnchors</id>
+            <label>Custom Trust Anchors</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="security-tls" description="TLS / DoH">
+        <field>
+            <id>blocky.global.certFile</id>
+            <label>TLS Certificate Path</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.global.keyFile</id>
+            <label>TLS Private Key Path</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.global.minTlsServeVersion</id>
+            <label>Minimum TLS Version</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="security-edns" description="EDNS">
+        <field>
+            <label>Extended DNS Errors</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.ede.enable</id>
+            <label>Enable Extended DNS Errors</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>EDNS Client Subnet</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.ecs.useAsClient</id>
+            <label>Use ECS as Client IP</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ecs.forward</id>
+            <label>Forward ECS to Upstream</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ecs.ipv4Mask</id>
+            <label>IPv4 Subnet Mask</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.ecs.ipv6Mask</id>
+            <label>IPv6 Subnet Mask</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Special Use Domain Names</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.specialUseDomains.enable</id>
+            <label>Enable SUDN Handling</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.specialUseDomains.rfc6762AppendixG</id>
+            <label>RFC 6762 Appendix G TLDs</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <activetab>security-dnssec</activetab>
+</form>
