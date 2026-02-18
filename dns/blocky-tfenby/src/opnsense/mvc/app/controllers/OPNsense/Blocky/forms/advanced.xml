@@ -1,0 +1,87 @@
+<form>
+    <tab id="advanced-redis" description="Redis">
+        <field>
+            <label>Connection</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.redis.address</id>
+            <label>Server Address</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.username</id>
+            <label>Username</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.password</id>
+            <label>Password</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.database</id>
+            <label>Database Number</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.required</id>
+            <label>Require Connection</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.connectionAttempts</id>
+            <label>Connection Attempts</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.connectionCooldown</id>
+            <label>Connection Cooldown</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Sentinel</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.redis.sentinelUsername</id>
+            <label>Sentinel Username</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.sentinelPassword</id>
+            <label>Sentinel Password</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.redis.sentinelAddresses</id>
+            <label>Sentinel Addresses</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="advanced-dns64" description="DNS64">
+        <field>
+            <id>blocky.dns64.enable</id>
+            <label>Enable DNS64</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dns64.prefixes</id>
+            <label>NAT64 Prefixes</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.dns64.exclusionSet</id>
+            <label>Exclusion Set</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="advanced-custom" description="Custom Configuration">
+        <field>
+            <id>blocky.advanced.customYaml</id>
+            <label>Custom YAML</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <activetab>advanced-redis</activetab>
+</form>
