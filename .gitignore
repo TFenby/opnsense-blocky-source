@@ -1,3 +1,4 @@
 dist/
 *.pkg
 *.tar.gz
+*.swp

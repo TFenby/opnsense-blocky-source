@@ -11,7 +11,7 @@ on:
         required: false
 
 env:
-  PLUGIN_ABI: "FreeBSD:14:amd64"
+  PKG_ABI: "FreeBSD:14:amd64"
   REPO_REPO: opnsense-blocky
 
 jobs:
@@ -142,7 +142,7 @@ jobs:
 
       - name: Publish to pkg repo
         run: |
-          ABI="${{ env.PLUGIN_ABI }}"
+          ABI="${{ env.PKG_ABI }}"
 
           git clone "https://x-access-token:${{ secrets.PKG_REPO_TOKEN }}@github.com/${{ github.repository_owner }}/${{ env.REPO_REPO }}.git" pkg-repo
 
@@ -184,20 +184,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="blocky-${{ steps.version.outputs.tag }}"
+          TAG="blocky-${{ steps.version.outputs.tag }}-plugin-v${{ steps.plugin.outputs.version }}"
 
           # Create release if it doesn't exist, then upload/overwrite assets.
-          # Avoids delete+recreate which is not safe under cancellation.
+          # Tolerates CI re-runs for the same plugin version.
           gh release create "$TAG" \
-            --title "Blocky ${{ steps.version.outputs.tag }}" \
-            --notes "Built OPNsense packages for Blocky ${{ steps.version.outputs.tag }}" \
+            --title "Plugin ${{ steps.plugin.outputs.version }} — Blocky ${{ steps.version.outputs.tag }}" \
+            --notes "Built OPNsense packages: plugin ${{ steps.plugin.outputs.version }}, blocky ${{ steps.version.outputs.tag }}" \
             --latest 2>/dev/null || true
 
           gh release upload "$TAG" \
-            dist/${{ env.PLUGIN_ABI }}/*.pkg \
+            dist/${{ env.PKG_ABI }}/*.pkg \
             --clobber
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v3
         with:
-          subject-path: 'dist/${{ env.PLUGIN_ABI }}/*.pkg'
+          subject-path: 'dist/${{ env.PKG_ABI }}/*.pkg'

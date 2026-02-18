@@ -48,7 +48,7 @@ function blocky_services()
     }
 
     $services[] = [
-        'dns_ports' => ['53'],
+        'dns_ports' => ['5353'],
         'description' => gettext('Blocky DNS'),
         'configd' => [
             'restart' => ['blocky restart'],

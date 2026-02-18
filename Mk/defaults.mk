@@ -71,10 +71,6 @@ _PLUGIN_PYTHON!=${PYTHONLINK} -V
 PLUGIN_PYTHON?=	${_PLUGIN_PYTHON:[2]:S/./ /g:[1..2]:tW:S/ //}
 .endif
 
-# CI fallbacks when PHP/Python are not available
-PLUGIN_PHP?=    84
-PLUGIN_PYTHON?= 311
-
 .for REPLACEMENT in ABI PHP PYTHON
 . if empty(PLUGIN_${REPLACEMENT})
 .  warning Cannot build without PLUGIN_${REPLACEMENT} set
