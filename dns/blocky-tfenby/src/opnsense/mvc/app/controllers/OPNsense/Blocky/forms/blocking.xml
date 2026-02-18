@@ -1,0 +1,101 @@
+<form>
+    <tab id="blocking-denylists" description="Deny Lists">
+        <field>
+            <id>blocky.blocking.denylists</id>
+            <label>Deny List Groups</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="blocking-allowlists" description="Allow Lists">
+        <field>
+            <id>blocky.blocking.allowlists</id>
+            <label>Allow List Groups</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <tab id="blocking-clientgroups" description="Client Groups">
+        <field>
+            <id>blocky.blocking.clientGroupsBlock</id>
+            <label>Client Group Assignments</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.blockType</id>
+            <label>Block Response Type</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.blockTTL</id>
+            <label>Block TTL</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Loading Settings</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.refreshPeriod</id>
+            <label>List Refresh Period</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.strategy</id>
+            <label>Loading Strategy</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.maxErrorsPerSource</id>
+            <label>Max Errors Per Source</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.concurrency</id>
+            <label>Download Concurrency</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Download Settings</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.downloads.timeout</id>
+            <label>Download Timeout</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.downloads.writeTimeout</id>
+            <label>Write Timeout</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.downloads.readTimeout</id>
+            <label>Read Timeout</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.downloads.readHeaderTimeout</id>
+            <label>Header Read Timeout</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.downloads.attempts</id>
+            <label>Download Attempts</label>
+            <type>text</type>
+        </field>
+        <field>
+            <id>blocky.blocking.loading.downloads.cooldown</id>
+            <label>Retry Cooldown</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>Cache Exclusions</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>blocky.caching.exclude</id>
+            <label>Excluded Domains</label>
+            <type>text</type>
+        </field>
+    </tab>
+    <activetab>blocking-denylists</activetab>
+</form>
