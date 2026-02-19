@@ -1,0 +1,12 @@
+# Ignore macOS artifacts
+.DS_Store
+
+# Ignore any local overrides or secrets
+*.local
+*.env
+
+# Ignore editor files
+.idea/
+.vscode/
+*.swp
+*.swo

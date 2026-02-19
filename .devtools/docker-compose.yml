@@ -1,0 +1,14 @@
+services:
+  blocky-ui:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the full plugin repo root read-only at /opt/plugin
+      # config.local.php points to /opt/plugin/dns/blocky-tfenby as the plugin package
+      - ../:/opt/plugin:ro
+      # Mount config.local.php into ui_devtools config directory
+      - ./config.local.php:/opt/ui_devtools/config/config.local.php:ro
+    environment:
+      DEV_WORKDIR: /opt/ui_devtools
