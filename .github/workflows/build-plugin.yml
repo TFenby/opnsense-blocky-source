@@ -11,7 +11,7 @@ on:
         required: false
 
 env:
-  PKG_ABI: "FreeBSD:14:amd64"
+  PKG_ABI: "FreeBSD:15:amd64"
   REPO_REPO: opnsense-blocky
 
 jobs:
@@ -56,13 +56,8 @@ jobs:
         id: version
         run: |
           TAG="${{ steps.resolve.outputs.tag }}"
-          SHORT="${TAG#v}"
-          MAJOR_MINOR=$(echo "$SHORT" | cut -d. -f1,2)
-          PATCH=$(echo "$SHORT" | cut -d. -f3)
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "short=$SHORT" >> "$GITHUB_OUTPUT"
-          echo "major_minor=$MAJOR_MINOR" >> "$GITHUB_OUTPUT"
-          echo "patch=${PATCH:-0}" >> "$GITHUB_OUTPUT"
+          echo "short=${TAG#v}" >> "$GITHUB_OUTPUT"
 
       - name: Parse plugin version
         id: plugin
@@ -101,7 +96,7 @@ jobs:
       - name: Build packages in FreeBSD
         uses: vmactions/freebsd-vm@v1
         with:
-          release: "14.2"
+          release: "15.1"
           usesh: true
           copyback: true
           mem: 6144
@@ -109,32 +104,32 @@ jobs:
           run: |
             set -eu
 
-            VERSION="${{ steps.version.outputs.major_minor }}"
-            REVISION="${{ steps.version.outputs.patch }}"
+            VERSION="${{ steps.version.outputs.short }}"
 
-            echo "==> Building binary package: blocky-tfenby ${VERSION}_${REVISION}"
-            sh Scripts/build-blocky-pkg.sh "${VERSION}" "${REVISION}" staging/bin/blocky
+            echo "==> Building binary package: blocky-tfenby ${VERSION}"
+            echo "==> Host ABI: $(pkg config abi)"
+            sh Scripts/build-blocky-pkg.sh "${VERSION}" 0 staging/bin/blocky
 
             echo "==> Installing binary package (needed for plugin PLUGIN_DEPENDS)"
-            pkg add dist/FreeBSD:14:amd64/blocky-tfenby-*.pkg
+            pkg add dist/${{ env.PKG_ABI }}/blocky-tfenby-*.pkg
 
             echo "==> Building plugin package"
             PLUGIN_HASH=$(echo "${{ github.sha }}" | cut -c1-9)
             cd dns/blocky-tfenby
-            make package PLUGIN_PHP=84 PLUGIN_PYTHON=311 PLUGIN_HASH="${PLUGIN_HASH}"
+            make package PLUGIN_PHP=85 PLUGIN_PYTHON=313 PLUGIN_HASH="${PLUGIN_HASH}"
             cd ../..
 
             echo "==> Copying plugin package to dist"
-            cp dns/blocky-tfenby/work/pkg/*.pkg dist/FreeBSD:14:amd64/
+            cp dns/blocky-tfenby/work/pkg/*.pkg dist/${{ env.PKG_ABI }}/
 
             echo "==> Generating repo index"
-            pkg repo dist/FreeBSD:14:amd64/ repo.key
+            pkg repo dist/${{ env.PKG_ABI }}/ repo.key
 
             echo "==> Verifying repo catalog is signed"
-            ls -la dist/FreeBSD:14:amd64/packagesite.pkg
+            ls -la dist/${{ env.PKG_ABI }}/packagesite.pkg
 
             echo "==> Packages built:"
-            ls -la dist/FreeBSD:14:amd64/
+            ls -la dist/${{ env.PKG_ABI }}/
 
       - name: Clean signing key
         if: always()
