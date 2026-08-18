@@ -35,6 +35,8 @@ function blocky_enabled()
 function blocky_configure()
 {
     return [
+        /* 'dns' fires mid-boot; 'bootup' runs last, once the WAN is usable */
+        'bootup' => ['blocky_configure_do'],
         'dns' => ['blocky_configure_do'],
     ];
 }
@@ -64,6 +66,13 @@ function blocky_services()
 
 function blocky_configure_do($verbose)
 {
+    if (!blocky_enabled()) {
+        /* stop while rc.conf.d still has blocky_enable="YES", or rc.subr refuses */
+        configd_run('blocky stop');
+        configd_run('template reload OPNsense/Blocky');
+        return;
+    }
+
     service_log('Starting Blocky DNS...', $verbose);
     configd_run('template reload OPNsense/Blocky');
     configd_run('blocky restart');

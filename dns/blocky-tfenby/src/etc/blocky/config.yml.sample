@@ -3,6 +3,11 @@
 # After editing, restart the service: configctl blocky restart
 
 upstreams:
+  # "fast" serves DNS immediately and verifies upstreams in the background.
+  # The default ("blocking") makes blocky exit when no upstream answers, which
+  # on a cold boot means it never comes up at all.
+  init:
+    strategy: fast
   groups:
     default:
       - 1.1.1.1
@@ -14,6 +19,10 @@ ports:
   http: 4000
 
 blocking:
+  # Same reasoning: don't die because a denylist download failed at boot.
+  # Lists are retried on the refresh period (4h by default).
+  loading:
+    strategy: fast
   denylists:
     ads:
       - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
